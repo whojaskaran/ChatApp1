@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
-import { axiosInstance } from "../lib/axios";
+import api from "../lib/axios";
 import { useAuthStore } from "./useAuthStore";
 
 export const useChatStore = create((set, get) => ({
@@ -10,10 +10,11 @@ export const useChatStore = create((set, get) => ({
   isUsersLoading: false,
   isMessagesLoading: false,
 
+  // ✅ fetch users
   getUsers: async () => {
     set({ isUsersLoading: true });
     try {
-      const res = await axiosInstance.get("/messages/users");
+      const res = await api.get("/api/messages/users");
       set({ users: res.data });
     } catch (error) {
       console.error("getUsers error:", error);
@@ -23,10 +24,11 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  // ✅ fetch messages
   getMessages: async (userId) => {
     set({ isMessagesLoading: true });
     try {
-      const res = await axiosInstance.get(`/messages/${userId}`);
+      const res = await api.get(`/api/messages/${userId}`);
       set({ messages: res.data });
     } catch (error) {
       console.error("getMessages error:", error);
@@ -36,6 +38,7 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  // ✅ send message
   sendMessage: async (messageData) => {
     const { selectedUser, messages } = get();
     if (!selectedUser) {
@@ -44,8 +47,8 @@ export const useChatStore = create((set, get) => ({
     }
 
     try {
-      const res = await axiosInstance.post(
-        `/messages/send/${selectedUser._id}`,
+      const res = await api.post(
+        `/api/messages/send/${selectedUser._id}`,
         messageData
       );
       set({ messages: [...messages, res.data] });
@@ -55,6 +58,7 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  // ✅ realtime messages
   subscribeToMessages: () => {
     const { selectedUser } = get();
     if (!selectedUser) return;
@@ -67,9 +71,10 @@ export const useChatStore = create((set, get) => ({
 
     socket.off("newMessage");
     socket.on("newMessage", (newMessage) => {
-      const isMessageSentFromSelectedUser =
+      const isFromSelectedUser =
         String(newMessage.senderId) === String(selectedUser._id);
-      if (!isMessageSentFromSelectedUser) return;
+
+      if (!isFromSelectedUser) return;
 
       set({
         messages: [...get().messages, newMessage],
