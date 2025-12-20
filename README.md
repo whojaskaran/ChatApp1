@@ -93,7 +93,7 @@ We will be using Render for the backend and Vercel for the frontend.
     *   **Root Directory:** `backend`
     *   **Build Command:** `npm install`
     *   **Start Command:** `npm start`
-4.  **Add your environment variables** from `backend/.env`.
+4.  **Add your environment variables** from `backend/.env`. Make sure to update `FRONTEND_URL` with your Vercel frontend URL.
 5.  **Click "Create Web Service".**
 
 ### Frontend Deployment (Vercel)
