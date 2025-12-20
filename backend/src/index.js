@@ -13,6 +13,9 @@ const { app, server } = require("./lib/socket.js");
 
 const PORT = process.env.PORT || 5000;
 
+// 🔥 CRITICAL FIX (WITHOUT THIS, SECURE COOKIES WILL NEVER WORK ON RENDER)
+app.set("trust proxy", 1);
+
 // ===================== MIDDLEWARE =====================
 app.use(express.json());
 app.use(cookieParser());
@@ -29,13 +32,8 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // allow requests with no origin (Postman, server-to-server)
       if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
+      if (allowedOrigins.includes(origin)) return callback(null, true);
       return callback(new Error("CORS not allowed"));
     },
     credentials: true,
