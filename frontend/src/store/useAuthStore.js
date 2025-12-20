@@ -1,4 +1,3 @@
-// frontend/src/store/useAuthStore.js
 import { create } from "zustand";
 import api from "../lib/axios";
 import toast from "react-hot-toast";
@@ -87,13 +86,19 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // ✅ SOCKET (cookie-based HTTP, token-less socket for now)
+  // ✅ SOCKET (register user so online users work)
   connectSocket: () => {
+    const { authUser } = get();
+    if (!authUser) return;
     if (get().socket?.connected) return;
 
     const socket = io(SOCKET_URL, {
       withCredentials: true,
       transports: ["websocket"],
+    });
+
+    socket.on("connect", () => {
+      socket.emit("registerUser", authUser._id);
     });
 
     socket.on("getOnlineUsers", (users) => {
@@ -106,5 +111,6 @@ export const useAuthStore = create((set, get) => ({
   disconnectSocket: () => {
     const sock = get().socket;
     if (sock?.connected) sock.disconnect();
+    set({ socket: null, onlineUsers: [] });
   },
 }));
