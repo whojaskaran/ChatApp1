@@ -2,6 +2,9 @@
 
 A real-time chat application built using the MERN stack with Socket.io for instant messaging.
 
+## 🌐 Live Demo
+https://chat-app-alpha-five-69.vercel.app/
+
 ## 🚀 Features
 - User authentication (signup & login)
 - Real-time messaging
@@ -17,6 +20,6 @@ A real-time chat application built using the MERN stack with Socket.io for insta
 ## ⚙️ Local Setup
 ```bash
 git clone https://github.com/whojaskaran/ChatApp1.git
-cd chat-app
+cd ChatApp1
 cd backend && npm install && npm start
 cd ../frontend && npm install && npm run dev
